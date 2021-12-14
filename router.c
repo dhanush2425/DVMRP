@@ -9,17 +9,21 @@ int main(int argc , char **argv)
 
 
 
-  int L[10],myRID=0,i,j,a,c,k=0,loop = 0,B=0,r=0,l=0;
+  int L[10];
+  int router_id=0;
+  int i,j,a,c,k=0;
+  int loop_val = 0,B=0;
+  int r=0,l=0;
 
 
   char *R0[24];
 
 
-  char RT[10][3];
+  char routing_table[10][3];
   int M[10][3]; 
 
   static const long max_len = 126 + 1;  
-  char buff[max_len + 1];               
+  char buffer[max_len + 1];               
 
 
 
@@ -37,63 +41,41 @@ int main(int argc , char **argv)
   char ROUTX[20];
   char LANX[20];
 
-
-
-  if(argc > 10)
-  {
-   printf("Invalid Number of Arguments\n");
-  }
-
-     else
-     {
-                       myRID = atoi(argv[1]);
-                       printf ("My Router-ID is : %d",myRID);
-
-                     
-
-      }
-        
-                      printf("Router is starting with following arguments:\n");
-
-                        for(i=0 ; i<10 ; i++)
-                            {
-                                RT[i][0]=i;
-                                RT[i][1]=10;
-                                RT[i][2]=myRID; 
+router_id = atoi(argv[1]);
+printf ("The Router ID is : %d",router_id);
+printf("Router is started\n");
+for(i=0 ; i<10 ; i++)
+    {
+         routing_table[i][0]=i;
+        routing_table[i][1]=10;
+        routing_table[i][2]=router_id; 
   
-                             }
+        }
 
 
-               sprintf(ROUTX,"ROUT%d.txt",myRID);
-
-               if((fd1 = fopen(ROUTX,"a+")) == NULL)
-                      {
-                     printf("Error opening file %s\n",ROUTX);
-                    exit(1);
-                      }
+    sprintf(ROUTX,"ROUT%d.txt",router_id);
+    if((fd1 = fopen(ROUTX,"a+")) == NULL)
+        {
+        printf("Cannot Open File %s\n",ROUTX);
+        exit(1);
+        }
                
-              
-
-
-                       
-
-               
-                         for (c=2; c < argc; c++)
+        for (c=2; c < argc; c++)
                          {
                            
                            L[l]=atoi(argv[c]);
                           
-                           RT[L[l]][1] = 0 ;
-                           RT[L[l]][2] = myRID;
+                           routing_table[L[l]][1] = 0 ;
+                           routing_table[L[l]][2] = router_id;
                            
-                           printf("LAN-ID is %d\n",L[l]);
+                           printf("The LAN ID is %d\n",L[l]);
 
                            sprintf(LANX,"LAN%d.txt",L[l]);
                            printf("%s\n",LANX);  
                                         
                            if((fd = fopen(LANX,"a+")) == NULL)
                                  {
-                                     printf("Error opening file %s",LANX);
+                                     printf("Cannot open File %s",LANX);
                                       continue;
                                   }
                                             
@@ -101,7 +83,7 @@ int main(int argc , char **argv)
                            
 
 
-                           sprintf(dv,"DV %d %d",L[l],myRID); 
+                           sprintf(dv,"DV %d %d",L[l],router_id); 
                            l++;
 
                             for(i=0 ; i<10 ; i++)
@@ -113,7 +95,7 @@ int main(int argc , char **argv)
                                 if(l==i)  
                                  {
                                  M[i][1]=0;
-                                 M[i][2]=myRID;
+                                 M[i][2]=router_id;
                                  } 
 
                               sprintf(temp," %d router%d",M[i][1],M[i][2]); 
@@ -135,7 +117,7 @@ int main(int argc , char **argv)
 
      int routerfunction()
      {
-                    printf(" in router %d\n",myRID);
+                    printf(" in router %d\n",router_id);
                     if(l != 0)
                        {
                           for(r=0; r < l ; r++) 
@@ -144,7 +126,7 @@ int main(int argc , char **argv)
 
                              if((fd = fopen(LANX,"r")) == NULL)
                               {
-                                printf("Error opening file %s",LANX);
+                                printf("Cannot open File %s",LANX);
                                   break;
                                }
                         
@@ -153,36 +135,36 @@ int main(int argc , char **argv)
               
                   fseek(fd, -max_len, SEEK_END);      
 
-                  fread(buff, max_len-1, 1, fd);
+                  fread(buffer, max_len-1, 1, fd);
 
                   fclose(fd);                                    
   
-                 buff[max_len-1] = '\0';                         
+                 buffer[max_len-1] = '\0';                         
 
-                char *last_newline = strrchr(buff, '\n');       
+                char *last_newline = strrchr(buffer, '\n');       
     
                 char *last_line = last_newline - 1;               
 
 
                 char *word="DV";
 
-                char *pch = strstr(buff,word);
+                char *pch = strstr(buffer,word);
   
 
                       if(pch)
                          {
                             
-                            printf("Found %s\n", buff);    
+                            printf("Found %s\n", buffer);    
         
 
-                            strcpy(dtm, buff);
+                            strcpy(dtm, buffer);
 
                           }
 
 
                             if (strlen(dtm) != 0)
                              {
-                               printf("\n The contents of the line as tokens is \n");
+                               printf("\n The contents are \n");
  
                                token = strtok(dtm," "); 
 
@@ -205,18 +187,18 @@ int main(int argc , char **argv)
 
           printf("%d",atoi(R0[2]));
 
-         if (myRID != atoi(R0[2])) 
+         if (router_id != atoi(R0[2])) 
            {
                       
              for(i=0; i<10; i++) 
              {  
              
-               if(RT[i][1] > (atoi(R0[k])))
+               if(routing_table[i][1] > (atoi(R0[k])))
                 {
                 
-                 RT[i][1]=((atoi(R0[k])) + 1);
+                 routing_table[i][1]=((atoi(R0[k])) + 1);
                  printf("%d",(R0[k+1][6] - '0'));
-                 RT[i][2] = (R0[k+1][6] - '0');
+                 routing_table[i][2] = (R0[k+1][6] - '0');
                 }
                
                 k= k+2;
@@ -234,7 +216,7 @@ int main(int argc , char **argv)
              {  
                for(j=0; j<3; j++) 
                 {
-               printf("%d\t",RT[i][j]); 
+               printf("%d\t",routing_table[i][j]); 
                 }
                 printf("\n"); 
              }
@@ -242,19 +224,19 @@ int main(int argc , char **argv)
          }                
       }
 }
-                           loop = 100;
+                           loop_val = 100;
                   
-                           if (B < loop)
+                           if (B < loop_val)
                             {
                   
                                 B++;
 
                              }
 
-                           for(; B < loop ; B++)
+                           for(; B < loop_val ; B++)
                            {
-                              printf("Value of loop is:%d\n",loop);
-                              printf("Value of time counter in router is:%d\n",B); 
+                              printf("Loop Value is:%d\n",loop_val);
+                              printf("Counter Value is:%d\n",B); 
                               sleep(1);
                               routerfunction();
                            }
@@ -270,3 +252,4 @@ int main(int argc , char **argv)
 
 
    
+
